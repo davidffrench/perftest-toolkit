@@ -1,3 +1,3 @@
-buddhi ansible_host=<buddhi-host> ansible_user=<buddhi-user>
-injector ansible_host=<injector-host> ansible_user=<injector-user>
-upstream ansible_host=<upstream-host> ansible_user=<upstream-user>
+buddhi ansible_host=ec2-54-77-45-101.eu-west-1.compute.amazonaws.com ansible_user=centos
+injector ansible_host=ec2-54-77-45-101.eu-west-1.compute.amazonaws.com ansible_user=centos
+upstream ansible_host=ec2-34-245-234-87.eu-west-1.compute.amazonaws.com ansible_user=centos

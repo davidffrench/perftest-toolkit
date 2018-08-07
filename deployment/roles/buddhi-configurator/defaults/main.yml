@@ -1,10 +1,10 @@
 ---
 # defaults file for buddhi-configurator
 # Traffic profile options: simple, onprem, saas
-buddhi_traffic_profile: "<traffic_profile>"
-buddhi_internal_api_uri: "<backend_internal_api_uri>"
-buddhi_backend_uri: http://backend-listener:3000
-buddhi_backend_username: "<backend_username>"
-buddhi_backend_pass: "<backend_basic_auth_pass>"
-buddhi_upstream_uri: "<upstream_uri>"
-buddhi_wildcard_domain: "benchmark.<wildcard_domain>"
+buddhi_traffic_profile: "simple"
+buddhi_internal_api_uri: "http://backend-3scale.eguzki-amp-cli-03.master.staging.3sca.net"
+buddhi_backend_uri: "http://backend-listener:3000"
+buddhi_backend_username: "3scale_api_user"
+buddhi_backend_pass: "5ccevqso"
+buddhi_upstream_uri: "http://ec2-34-245-234-87.eu-west-1.compute.amazonaws.com:8081"
+buddhi_wildcard_domain: "benchmark.eguzki-amp-cli-03.master.staging.3sca.net"

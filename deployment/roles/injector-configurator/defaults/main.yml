@@ -18,6 +18,6 @@ injector_jmeter_image_contents_path: "{{ injector_root_path }}/jmeter-image-cont
 injector_jmeter_image_name: "jmeter-benchmark"
 injector_jmeter_image_tag: "1.0"
 
-injector_jmeter_target_host: "<jmeter_target_host>"
+injector_jmeter_target_host: "api-3scale-apicast-production.eguzki-amp-cli-03.master.staging.3sca.net"
 injector_jmeter_protocol: "http"
 injector_jmeter_target_port: "80"
