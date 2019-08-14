@@ -15,7 +15,7 @@ module AMP
         APPLICATION_KEY_TEMPLATE = %i[value user_key application_id service_id].freeze
         BACKEND_URL_PATH = '/transactions/authrep.xml'.freeze
 
-        attr_reader :internal_backend, :backend_url, :backend_username, :backend_password, :http_port
+        attr_reader :internal_backend, :backend_url, :backend_username, :backend_password, :http_port, :upstream_endpoint
 
         def initialize(services, opts)
           @internal_backend = opts[:internal_api]
@@ -24,7 +24,7 @@ module AMP
           @backend_password = opts[:password]
           @http_port = opts[:port]
           @services = services
-          @endpoint = opts[:endpoint]
+          @upstream_endpoint = opts[:endpoint]
           @host = URI(opts[:apicast] || 'http://').host
         end
 
@@ -100,22 +100,54 @@ module AMP
             backend_authentication_value: service[:provider_key],
             backend_version: service[:backend_version],
             proxy: {
-              api_backend: @endpoint,
+              api_backend: api_backend_endpoint,
               hosts: hosts_for(service[:id]),
               backend: {
-                endpoint: @backend_url
+                endpoint: backend_url
               },
-              # first metric is the parent 'hits'
-              proxy_rules: service[:metrics].values.drop(1).each_with_index.map do |metric, idx|
-                {
-                  http_method: 'GET',
-                  pattern: proxy_pattern(idx + 1),
-                  metric_system_name: metric[:name],
-                  delta: 1
-                }
-              end
+              proxy_rules: proxy_rules(service)
             }
           }
+        end
+
+        def proxy_rules(service)
+          if custom_path
+            custom_proxy_rules(service)
+          else
+            test_plan_based_proxy_rules(service)
+          end
+        end
+
+        def custom_proxy_rules(service)
+          url_obj = URI.parse(upstream_endpoint)
+          [
+            {
+              http_method: 'GET',
+              pattern: "#{url_obj.path}",
+              # first metric is the parent 'hits'
+              metric_system_name: service[:metrics].values[1][:name],
+              delta: 1
+            }
+          ]
+        end
+
+        def test_plan_based_proxy_rules(service)
+          # first metric is the parent 'hits'
+          service[:metrics].values.drop(1).each_with_index.map do |metric, idx|
+            {
+              http_method: 'GET',
+              pattern: proxy_pattern(idx + 1),
+              metric_system_name: metric[:name],
+              delta: 1
+            }
+          end
+        end
+
+        def api_backend_endpoint
+          url_obj = URI.parse(upstream_endpoint)
+          url_obj.path = ''
+          url_obj.query = nil
+          url_obj.to_s
         end
 
         def proxy_pattern(n)
@@ -123,6 +155,29 @@ module AMP
         end
 
         def amp_path
+          if custom_path
+            custom_amp_path
+          else
+            test_plan_amp_path
+          end
+        end
+
+        def custom_amp_path
+          service = @services.values.sample
+          app_key = service[:application_keys].sample
+          app_id_auth = app_auth_params app_key
+
+          url_obj = URI.parse(upstream_endpoint)
+          # url_obj.query can be nil
+          # concat query params from url_object and 3scale app keys
+          new_query = URI.decode_www_form(String(url_obj.query)).concat(URI.decode_www_form(URI.encode_www_form(app_id_auth)))
+          amp_uri_obj = amp_uri(url_obj.path, new_query)
+          host = hosts_for(service[:id]).first
+          path = "#{amp_uri_obj.path}?#{amp_uri_obj.query}"
+          %("#{host}","#{path}")
+        end
+
+        def test_plan_amp_path
           service = @services.values.sample
           app_key = service[:application_keys].sample
           app_id_auth = app_auth_params app_key
@@ -167,6 +222,13 @@ module AMP
 
         def filter_matching_rule(rule, path)
           !/#{rule[:pattern]}/.match(path).nil?
+        end
+
+        # If upstream endpoint is full url with path, use that path for tests
+        # otherwise, generate path pattern following specific test plan
+        def custom_path
+          url_obj = URI.parse(upstream_endpoint)
+          url_obj.path.length > 1
         end
       end
     end
