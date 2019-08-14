@@ -8,7 +8,7 @@ RSpec.describe AMP::Toolkit::Buddhi::TestPlan do
       username: 'my_username',
       password: 'my_password',
       port: 7865,
-      endpoint: 'my_endpoint',
+      endpoint: 'http://upstream.io',
       apicast: 'http://my_apicast.io'
     }
   end
@@ -110,7 +110,7 @@ RSpec.describe AMP::Toolkit::Buddhi::TestPlan do
         backend_authentication_value: 'some_prov_key_a',
         backend_version: 1,
         proxy: {
-          api_backend: 'my_endpoint',
+          api_backend: 'http://upstream.io',
           hosts: ['idA.my_apicast.io'],
           backend: {
             endpoint: 'http://my_backend.io'
