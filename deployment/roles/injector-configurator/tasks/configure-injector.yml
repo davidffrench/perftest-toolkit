@@ -1,4 +1,5 @@
 ---
+<<<<<<< HEAD
 - name: Creates test plan directory
   file:
     path: "{{ injector_plans_path }}"
@@ -25,3 +26,11 @@
     src: "{{ injector_bin_path }}/3scale-perftest"
     dest: "/usr/local/bin/3scale-perftest"
     state: link
+=======
+- name: Install Galaxy setup role for Hyperfoil
+  shell: ansible-galaxy install hyperfoil.hyperfoil_setup,0.3
+- name: Install Galaxy shutdown role for Hyperfoil
+  shell: ansible-galaxy install hyperfoil.hyperfoil_shutdown,0.3
+- name: Install Galaxy install role for Hyperfoil
+  shell: ansible-galaxy install hyperfoil.hyperfoil_test,0.3
+>>>>>>> Replace injector driver to use Hyperfoil.
