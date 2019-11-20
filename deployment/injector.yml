@@ -26,7 +26,11 @@
       name: hyperfoil.hyperfoil_test
     vars:
       test_name: 3scale-benchmark
-#- hosts: hyperfoil_controller
-#  tasks:
-#  - include_role:
-#      name: hyperfoil.hyperfoil_shutdown
+- hosts: hyperfoil_controller
+  tasks:
+  - include_role:
+      name: hyperfoil.hyperfoil_shutdown
+- hosts: hyperfoil_controller
+  tasks:
+  - include_role:
+      name: hyperfoil.hyperfoil_generate_report

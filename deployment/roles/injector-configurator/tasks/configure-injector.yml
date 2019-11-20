@@ -5,3 +5,5 @@
   shell: ansible-galaxy install hyperfoil.hyperfoil_shutdown,0.4
 - name: Install Galaxy install role for Hyperfoil
   shell: ansible-galaxy install hyperfoil.hyperfoil_test,0.4
+- name: Install Galaxy roles for Hyperfoil
+  shell: ansible-galaxy install hyperfoil.hyperfoil_generate_report,0.0.1
