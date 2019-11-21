@@ -22,3 +22,5 @@ injector_target_group: injector_target
 injector_target_port: 80
 
 hyperfoil_controller_group: hyperfoil_controller
+
+hyperfoil_version: 0.5
