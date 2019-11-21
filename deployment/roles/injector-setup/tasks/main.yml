@@ -12,4 +12,4 @@
     include_role:
       name: hyperfoil.hyperfoil_setup
     vars:
-      hyperfoil_controller_args: -Dio.hyperfoil.deploy.timeout=30000
+      hyperfoil_controller_args: "-Dio.hyperfoil.deploy.timeout=30000 -Dio.hyperfoil.controller.cluster.ip={{ hyperfoil_controller_host }}"
