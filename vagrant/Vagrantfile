@@ -6,7 +6,7 @@ VAGRANTFILE_API_VERSION = "2"
 VM_BOX = "fedora/30-cloud-base"
 VM_BOX_VERSION = "30.20190425.0"
 VM_PACKAGES = "java-1.8.0-openjdk.x86_64 openssl apr libxcrypt-compat ansible expect unzip"
-VM_AGENTS_SCRIPT = "sudo dnf install -y " + VM_PACKAGES + ";sudo dnf update --security -y"
+VM_AGENTS_SCRIPT = "sudo dnf update --security -y;sudo dnf install -y " + VM_PACKAGES 
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.insert_key = false
@@ -79,7 +79,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inventory.vm.box_version = VM_BOX_VERSION
     inventory.vm.network :private_network, ip: "192.168.42.45"
     inventory.vm.provision "bootstrap", type: "shell" do |s|
-      s.inline = VM_AGENTS_SCRIPT + ";sudo su - vagrant --command=\"ssh-keygen -f ~/.ssh/id_rsa -N '';cp /vagrant/config /home/vagrant/.ssh/config;chmod 644 /home/vagrant/.ssh/config;chmod +x /vagrant/push-ssh-key.sh;/vagrant/push-ssh-key.sh vagrant@injector-agent-01;/vagrant/push-ssh-key.sh vagrant@injector-agent-02;/vagrant/push-ssh-key.sh vagrant@injector-controller;git clone https://github.com/3scale/perftest-toolkit.git --branch hyperfoil\" "
+      s.inline = VM_AGENTS_SCRIPT + " java-11-openjdk.x86_64 " + ";sudo su - vagrant --command=\"ssh-keygen -f ~/.ssh/id_rsa -N '';cp /vagrant/config /home/vagrant/.ssh/config;chmod 644 /home/vagrant/.ssh/config;chmod +x /vagrant/push-ssh-key.sh;/vagrant/push-ssh-key.sh vagrant@injector-agent-01;/vagrant/push-ssh-key.sh vagrant@injector-agent-02;/vagrant/push-ssh-key.sh vagrant@injector-controller;git clone https://github.com/3scale/perftest-toolkit.git --branch hyperfoil\" "
       end
   end
 
