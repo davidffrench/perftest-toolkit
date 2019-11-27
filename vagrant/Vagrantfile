@@ -5,8 +5,9 @@
 VAGRANTFILE_API_VERSION = "2"
 VM_BOX = "fedora/30-cloud-base"
 VM_BOX_VERSION = "30.20190425.0"
-VM_PACKAGES = "java-1.8.0-openjdk.x86_64 openssl apr libxcrypt-compat ansible expect unzip"
-VM_AGENTS_SCRIPT = "sudo dnf update --security -y;sudo dnf install -y " + VM_PACKAGES 
+VM_PACKAGES = "java-1.8.0-openjdk-devel.x86_64 openssl apr libxcrypt-compat ansible expect unzip"
+VM_AGENTS_SCRIPT = "sudo dnf update --security -y;sudo dnf install -y " + VM_PACKAGES
+#VM_AGENTS_SCRIPT = "sudo dnf install -y " + VM_PACKAGES
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.insert_key = false
@@ -27,7 +28,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inventory.vm.box_version = VM_BOX_VERSION
     inventory.vm.network :private_network, ip: "192.168.42.41"
     inventory.vm.provision "bootstrap", type: "shell" do |s|
-      s.inline = "sudo dnf install -y java-1.8.0-openjdk-devel.x86_64;sudo dnf update --security -y;mkdir -p /tmp/vertx-cache;chown -R vagrant:vagrant /tmp/vertx-cache;sudo su - vagrant --command=\"git clone https://github.com/whitingjr/echo-api.git\;cd echo-api;./gradlew assemble --no-daemon;java -jar build/libs/echo-api-1.0-SNAPSHOT-fat.jar start org.jboss.echoapi.EchoService\""
+      s.inline = "ulimit -n 4096; " + VM_AGENTS_SCRIPT + ";mkdir -p /tmp/vertx-cache;chown -R vagrant:vagrant /tmp/vertx-cache;sudo su - vagrant --command=\"git clone https://github.com/whitingjr/echo-api.git\;cd echo-api;./gradlew assemble --no-daemon;java -jar build/libs/echo-api-1.0-SNAPSHOT-fat.jar start org.jboss.echoapi.EchoService\""
     end
   end
 
@@ -38,7 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inventory.vm.box_version = VM_BOX_VERSION
     inventory.vm.network :private_network, ip: "192.168.42.42"
     inventory.vm.provision "bootstrap", type: "shell" do |s|
-      s.inline = "sudo dnf install -y java-1.8.0-openjdk-devel.x86_64;sudo dnf update --security -y;mkdir -p /tmp/vertx-cache;chown -R vagrant:vagrant /tmp/vertx-cache;sudo su - vagrant --command=\"git clone https://github.com/whitingjr/echo-api.git\;cd echo-api;./gradlew assemble --no-daemon;java -jar build/libs/echo-api-1.0-SNAPSHOT-fat.jar start org.jboss.echoapi.EchoService\""
+      s.inline = "ulimit -n 4096; " + VM_AGENTS_SCRIPT + ";mkdir -p /tmp/vertx-cache;chown -R vagrant:vagrant /tmp/vertx-cache;sudo su - vagrant --command=\"git clone https://github.com/whitingjr/echo-api.git\;cd echo-api;./gradlew assemble --no-daemon;java -jar build/libs/echo-api-1.0-SNAPSHOT-fat.jar start org.jboss.echoapi.EchoService\""
     end 
   end
 
@@ -49,7 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inventory.vm.box_version = VM_BOX_VERSION
     inventory.vm.network :private_network, ip: "192.168.42.43"
     inventory.vm.provision "bootstrap", type: "shell" do |s|
-      s.inline = "sudo dnf install -y java-1.8.0-openjdk-devel.x86_64;sudo dnf update --security -y;mkdir -p /tmp/vertx-cache;chown -R vagrant:vagrant /tmp/vertx-cache;sudo su - vagrant --command=\"git clone https://github.com/whitingjr/echo-api.git\;cd echo-api;./gradlew assemble --no-daemon;java -jar build/libs/echo-api-1.0-SNAPSHOT-fat.jar start org.jboss.echoapi.EchoService\""
+      s.inline = "ulimit -n 4096; " + VM_AGENTS_SCRIPT + ";mkdir -p /tmp/vertx-cache;chown -R vagrant:vagrant /tmp/vertx-cache;sudo su - vagrant --command=\"git clone https://github.com/whitingjr/echo-api.git\;cd echo-api;./gradlew assemble --no-daemon;java -jar build/libs/echo-api-1.0-SNAPSHOT-fat.jar start org.jboss.echoapi.EchoService\""
     end
   end
 
@@ -59,7 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inventory.vm.box_version = VM_BOX_VERSION
     inventory.vm.network :private_network, ip: "192.168.42.46"
     inventory.vm.provision "bootstrap", type: "shell" do |s|
-      s.inline = VM_AGENTS_SCRIPT
+      s.inline = "ulimit -n 4096;" + VM_AGENTS_SCRIPT
     end
   end
 
@@ -69,7 +70,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #    inventory.vm.box_version = VM_BOX_VERSION
 #    inventory.vm.network :private_network, ip: "192.168.42.47"
 #    inventory.vm.provision "bootstrap", type: "shell" do |s|
-#      s.inline = VM_AGENTS_SCRIPT
+#      s.inline = "ulimit -n 4096;" + VM_AGENTS_SCRIPT
 #    end
 #  end
 
@@ -79,7 +80,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inventory.vm.box_version = VM_BOX_VERSION
     inventory.vm.network :private_network, ip: "192.168.42.45"
     inventory.vm.provision "bootstrap", type: "shell" do |s|
-      s.inline = VM_AGENTS_SCRIPT + " java-11-openjdk.x86_64 " + ";sudo su - vagrant --command=\"ssh-keygen -f ~/.ssh/id_rsa -N '';cp /vagrant/config /home/vagrant/.ssh/config;chmod 644 /home/vagrant/.ssh/config;chmod +x /vagrant/push-ssh-key.sh;/vagrant/push-ssh-key.sh vagrant@injector-agent-01;/vagrant/push-ssh-key.sh vagrant@injector-agent-02;/vagrant/push-ssh-key.sh vagrant@injector-controller;git clone https://github.com/3scale/perftest-toolkit.git --branch hyperfoil\" "
+      s.inline = "ulimit -n 4096;" + VM_AGENTS_SCRIPT + " java-11-openjdk.x86_64 " + ";sudo su - vagrant --command=\"ssh-keygen -f ~/.ssh/id_rsa -N '';cp /vagrant/config /home/vagrant/.ssh/config;chmod 644 /home/vagrant/.ssh/config;chmod +x /vagrant/push-ssh-key.sh;/vagrant/push-ssh-key.sh vagrant@injector-agent-01;/vagrant/push-ssh-key.sh vagrant@injector-agent-02;/vagrant/push-ssh-key.sh vagrant@injector-controller;git clone https://github.com/3scale/perftest-toolkit.git --branch hyperfoil\" "
       end
   end
 
